@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmoSense - Multimodal AI Emotion & Wellness Assistant</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom Glassmorphic Stylesheet -->
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="logo-group">
+      <div class="logo-icon">
+        <i class="fa-solid fa-brain"></i>
+      </div>
+      <div class="logo-text">
+        <h1>EmoSense</h1>
+        <span>Multimodal AI Wellness Assistant</span>
+      </div>
+    </div>
+
+    <!-- Interactive Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-tab="tab-checkin">
+        <i class="fa-solid fa-camera"></i> Live Check-In
+      </button>
+      <button class="tab-btn" data-tab="tab-analytics">
+        <i class="fa-solid fa-chart-line"></i> Trend Analytics
+      </button>
+      <button class="tab-btn" data-tab="tab-interventions">
+        <i class="fa-solid fa-heart-pulse"></i> Micro-Interventions
+      </button>
+      <button class="tab-btn" data-tab="tab-privacy">
+        <i class="fa-solid fa-shield-halved"></i> Data Privacy Center
+      </button>
+    </div>
+
+    <div class="system-status-badge">
+      <div class="status-dot"></div>
+      <span id="hardwareStatusText">Mac M1 PyTorch MPS Active</span>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Container -->
+  <div class="dashboard-container">
+
+    <!-- TAB 1: Live Multimodal Check-In Portal -->
+    <div id="tab-checkin" class="tab-content active">
+      <div class="grid-two-column">
+        
+        <!-- Left Column: Webcam & Check-in Inputs -->
+        <div>
+          <!-- Visual Signal: Edge AI Webcam -->
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-video" style="color: var(--primary-cyan);"></i>
+                <span>Visual Signal: Edge Facial Emotion Recognition</span>
+              </div>
+              <span class="badge" style="background: rgba(0,242,254,0.1); color: var(--primary-cyan); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem;">PyTorch MPS</span>
+            </div>
+
+            <div class="webcam-card-content">
+              <video id="webcamVideo" autoplay playsinline muted></video>
+              <canvas id="canvasOverlay"></canvas>
+
+              <div class="webcam-hud">
+                <div>
+                  <span class="emotion-live-tag" id="liveEmotionTag">Detecting Face...</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">Confidence:</span>
+                  <div class="confidence-bar-container">
+                    <div class="confidence-bar-fill" id="confidenceBar"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Textual & Self-Reported Mood -->
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-pen-fancy" style="color: var(--primary-blue);"></i>
+                <span>Micro-Journaling & Emoji Check-In</span>
+              </div>
+            </div>
+
+            <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; display: block;">Select Self-Reported Mood Emoji:</label>
+            <div class="emoji-grid" id="emojiGrid">
+              <button class="emoji-btn active" data-emoji="😀" data-mood="Happy">😀<span>Happy</span></button>
+              <button class="emoji-btn" data-emoji="🙂" data-mood="Calm">🙂<span>Calm</span></button>
+              <button class="emoji-btn" data-emoji="😐" data-mood="Neutral">😐<span>Neutral</span></button>
+              <button class="emoji-btn" data-emoji="😔" data-mood="Sad">😔<span>Sad</span></button>
+              <button class="emoji-btn" data-emoji="😠" data-mood="Angry">😠<span>Angry</span></button>
+              <button class="emoji-btn" data-emoji="😰" data-mood="Anxious">😰<span>Anxious</span></button>
+              <button class="emoji-btn" data-emoji="😴" data-mood="Tired">😴<span>Tired</span></button>
+            </div>
+
+            <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; display: block;">Micro-Journal ("How was your day?"):</label>
+            <textarea id="journalInput" class="journal-textarea" placeholder="Share a few words about how you're feeling right now..."></textarea>
+
+            <button id="analyzeBtn" class="action-btn">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>Run 3-Way Congruence Check-In</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Agentic AI Output -->
+        <div>
+          <!-- 3-Way Congruence Agent -->
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-shield-halved" style="color: var(--accent-amber);"></i>
+                <span>3-Way Congruence Agent (Gemini API)</span>
+              </div>
+              <span class="badge" id="maskingStatusBadge" style="background: rgba(16,185,129,0.15); color: var(--accent-emerald); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem;">Aligned</span>
+            </div>
+
+            <div class="congruence-display">
+              <div class="congruence-score-circle" id="congruenceGauge">
+                <div class="congruence-value" id="congruenceValue">88%</div>
+              </div>
+              <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500;">3-Way Alignment Score</div>
+
+              <div class="masking-alert-banner congruent" id="maskingAlertBanner">
+                <i class="fa-solid fa-circle-check" id="alertIcon"></i>
+                <span id="alertExplanation">Visual, textual, and self-reported signals are aligned.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Wellness Summary Report -->
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-notes-medical" style="color: var(--primary-blue);"></i>
+                <span>Agentic Wellness Synthesis</span>
+              </div>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.25); border-radius: var(--radius-md); padding: 1.25rem; border: 1px solid var(--glass-border);">
+              <p id="wellnessSummaryText" style="font-size: 0.95rem; color: var(--text-main); line-height: 1.6;">
+                Perform a check-in to generate your real-time agentic wellness summary and micro-intervention plan.
+              </p>
+
+              <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Recommended Reset:</span>
+                <span id="recommendedInterventionTag" style="font-weight: 600; color: var(--primary-cyan); font-size: 0.9rem;">4-7-8 Guided Breathing</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: Historical Analytics & Trend Scorer -->
+    <div id="tab-analytics" class="tab-content">
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fa-solid fa-chart-line" style="color: var(--accent-purple);"></i>
+            <span>Trend Scorer Agent: Historical Trajectory & Baseline Stability</span>
+          </div>
+        </div>
+        <div class="chart-container" style="height: 320px;">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Interactive Micro-Interventions Deck -->
+    <div id="tab-interventions" class="tab-content">
+      <div class="grid-two-column">
+        <!-- 4-7-8 Guided Breathing -->
+        <div class="glass-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-lungs" style="color: var(--accent-emerald);"></i>
+              <span>4-7-8 Guided Breathing Visualizer</span>
+            </div>
+          </div>
+
+          <div class="breathing-visualizer-container">
+            <div class="breathing-phase-text" id="breathingPhase">Click Start to Begin</div>
+            <div class="breathing-timer" id="breathingTimer">04</div>
+
+            <div class="breathing-circle-outer">
+              <div class="breathing-circle-inner" id="breathingRing">
+                <i class="fa-solid fa-heart-pulse"></i>
+              </div>
+            </div>
+
+            <button id="startBreathingBtn" class="action-btn" style="background: linear-gradient(135deg, var(--accent-emerald), #059669); width: auto; padding: 0.6rem 2rem;">
+              <i class="fa-solid fa-play"></i> Start 4-7-8 Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Ambient Relaxation Audio Player -->
+        <div class="glass-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-music" style="color: var(--primary-cyan);"></i>
+              <span>Ambient Soundscape Relaxation Player</span>
+            </div>
+          </div>
+
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+            432Hz Harmonic Binaural Frequencies designed to calm the nervous system and relieve mental strain.
+          </p>
+
+          <div class="audio-player-card">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(0,242,254,0.1); color: var(--primary-cyan); display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-water"></i>
+              </div>
+              <div>
+                <div style="font-weight: 600; color: #fff;">Ocean Harmonic Relaxation</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Calming Frequencies (432Hz)</div>
+              </div>
+            </div>
+
+            <button class="audio-play-btn" id="audioPlayBtn">
+              <i class="fa-solid fa-play"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: Data Privacy & Security Guidance Center -->
+    <div id="tab-privacy" class="tab-content">
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fa-solid fa-shield-halved" style="color: var(--accent-emerald);"></i>
+            <span>Data Privacy & Security Guidance Center</span>
+          </div>
+        </div>
+
+        <p style="font-size: 0.95rem; color: var(--text-main); line-height: 1.6; margin-bottom: 1.5rem;">
+          EmoSense is built on a <strong>Privacy-First Architecture</strong>. Your facial biometric privacy and personal journaling data are strictly safeguarded through local edge processing and encrypted SQLite storage.
+        </p>
+
+        <div class="privacy-grid">
+          <div class="privacy-card">
+            <div class="privacy-card-icon"><i class="fa-solid fa-microchip"></i></div>
+            <h4>Edge AI On-Device Processing</h4>
+            <p>Facial emotion recognition runs 100% locally on your Mac M1 MPS GPU using PyTorch CNN. Raw video frames are NEVER uploaded to any cloud server.</p>
+          </div>
+
+          <div class="privacy-card">
+            <div class="privacy-card-icon" style="background: rgba(124,58,237,0.1); color: var(--accent-purple);"><i class="fa-solid fa-database"></i></div>
+            <h4>Local Encrypted Storage</h4>
+            <p>Your check-in timeline and journal logs are stored safely inside your local SQLite database (<code>emosense.db</code>) on your own machine.</p>
+          </div>
+
+          <div class="privacy-card">
+            <div class="privacy-card-icon" style="background: rgba(245,158,11,0.1); color: var(--accent-amber);"><i class="fa-solid fa-robot"></i></div>
+            <h4>Agentic Congruence Safety</h4>
+            <p>The 3-Way Congruence Agent processes text sentiment and numerical emotion scores to detect emotional masking without retaining biometric face data.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Floating AI Assistant Chatbot Toggle Widget -->
+  <button class="chat-widget-toggle" id="chatToggleBtn" title="Ask EmoSense AI Assistant">
+    <i class="fa-solid fa-comment-dots"></i>
+  </button>
+
+  <!-- Chatbot Drawer Window -->
+  <div class="chat-drawer" id="chatDrawer">
+    <div class="chat-drawer-header">
+      <div class="chat-drawer-title">
+        <i class="fa-solid fa-bot" style="color: var(--primary-cyan);"></i>
+        <span>EmoSense AI Companion</span>
+      </div>
+      <button class="chat-close-btn" id="chatCloseBtn">&times;</button>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">
+        👋 Hello! I am your <strong>EmoSense AI Companion</strong>. Ask me anything about how to perform check-ins, how your biometric privacy is protected, or how 4-7-8 breathing works!
+      </div>
+    </div>
+
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" class="chat-input" placeholder="Ask about privacy, check-ins, or breathing..." />
+      <button id="chatSendBtn" class="chat-send-btn">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/charts.js"></script>
+  <script src="/static/js/breathing.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
