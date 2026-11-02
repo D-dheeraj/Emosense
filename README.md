@@ -9,7 +9,8 @@
   <a href="https://pytorch.org/"><img src="https://img.shields.io/badge/PyTorch-2.8_MPS_GPU-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white" alt="PyTorch MPS"/></a>
   <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/FastAPI-0.128-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI"/></a>
   <a href="https://ai.google.dev/"><img src="https://img.shields.io/badge/Google_Gemini-2.5_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Google Gemini"/></a>
-  <a href="https://www.bitmesra.ac.in/"><img src="https://img.shields.io/badge/BIT_Mesra-MCA_CA550-991b1b?style=for-the-badge" alt="BIT Mesra"/></a>
+  <a href="EmoSense_Project_Documentation.pdf"><img src="https://img.shields.io/badge/Documentation-PDF_Guide-059669?style=for-the-badge&logo=adobeacrobatreader&logoColor=white" alt="Documentation PDF"/></a>
+  <img src="https://img.shields.io/badge/Developer-Dheeraj_Kumar_Singh-0284c7?style=for-the-badge" alt="Developer"/>
   <img src="https://img.shields.io/badge/Status-Completed_%26_Deployed-success?style=for-the-badge" alt="Status"/>
 </p>
 
@@ -158,15 +159,12 @@ Emosense/
 │   ├── fig4_1_cnn_layers.png
 │   ├── fig5_2_training_curves.png
 │   └── fig5_3_latency_benchmark.png
-├── BIT_Mesra_EmoSense_Project_Report.md  # Official BIT Mesra Academic Report source
-├── BIT_Mesra_EmoSense_Project_Report.pdf # Final publication-grade 22-page academic report
-├── build_bit_mesra_perfect_report.py    # ReportLab multi-pass PDF compiler with exact TOC mapping
-├── generate_report_figures.py           # Offline PIL generator for high-res diagrams
-├── generate_pdf_doc.py                  # Standalone technical documentation generator
-├── requirements.txt                     # Pinned project dependencies
-├── .env.example                         # Environment variable configuration template
-├── .gitignore                           # Git exclusion rules
-└── README.md                            # Comprehensive project documentation
+├── EmoSense_Project_Documentation.pdf # Comprehensive Project Guide & Technical Documentation
+├── generate_clean_documentation_pdf.py# Automated PDF documentation generator
+├── requirements.txt             # Pinned project dependencies
+├── .env.example                 # Environment variable configuration template
+├── .gitignore                   # Git exclusion rules
+└── README.md                    # Comprehensive project documentation
 ```
 
 ---
@@ -238,17 +236,12 @@ http://127.0.0.1:8000
 
 ---
 
-## 🎓 Academic Credentials & Institutional Attribution
+## 👨‍💻 Developer & Project Credits
 
-This project was developed as a Capstone Final Project in partial fulfillment of the requirements for the award of the Degree of **Master of Computer Applications (MCA)** at **Birla Institute of Technology (BIT), Mesra, Ranchi**.
-
-- **Candidate**: **Dheeraj Kumar Singh**
-- **Roll Number**: **MCA/40044/25** (Section B)
-- **Academic Session**: 2024 – 2026
-- **Project Supervisor / Guide**: **Dr. Partha Sarthi Bishnu**
-- **Department**: Department of Computer Science & Engineering / Computer Applications
-- **Institution**: Birla Institute of Technology, Mesra – 835215, Ranchi, Jharkhand, India
-- **Course Code**: CA550 Small Industrial Training / Small Project / MOOC
+- **Developer & Author**: **Dheeraj Kumar Singh**
+- **Project Title**: **EmoSense: Multimodal Emotion & Wellness Assistant**
+- **Architecture**: PyTorch CNN (Mac M1 MPS GPU) + Google Gemini 2.5 Flash + FastAPI + VADER + SQLite
+- **Documentation Guide**: Download the complete visual walkthrough: [EmoSense_Project_Documentation.pdf](EmoSense_Project_Documentation.pdf)
 
 ---
 
