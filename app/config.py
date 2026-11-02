@@ -28,7 +28,7 @@ def get_torch_device():
 DEVICE = get_torch_device()
 
 # FER2013 Emotion Categories
-EMOTION_CLASSES = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
+EMOTION_CLASSES = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 # Model Paths
 MODEL_WEIGHTS_PATH = BASE_DIR / "models_weights" / "fer2013_custom_cnn.pth"

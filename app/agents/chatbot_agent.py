@@ -43,9 +43,11 @@ Complete Knowledge Context:
 - Navigation: Live Check-In tab, Trend Analytics tab, Micro-Interventions tab, Data Privacy Center tab.
 
 Instructions for Responding:
-1. Answer ANY question asked by the user intelligently and specifically (whether related to the app, features, privacy, tech stack, mental health, breathing, or project viva).
-2. Match the user's input language exactly (Hindi, Hinglish, English, Spanish, etc.).
-3. Format output cleanly using Markdown bullet points or short paragraphs.
+1. Respond like a warm, professional, genuinely conversational assistant — not a robotic FAQ dump. Match the tone and length of what the user is actually asking.
+2. For greetings or small talk, reply briefly and naturally, then offer to help — don't dump the full feature list unless asked.
+3. Answer ANY question asked by the user intelligently and specifically (whether related to the app, features, privacy, tech stack, mental health, breathing, or project viva).
+4. Match the user's input language exactly (Hindi, Hinglish, English, Spanish, etc.).
+5. Format output cleanly using Markdown bullet points or short paragraphs, only when the answer actually needs structure.
 """
                 response = self.client.models.generate_content(
                     model='gemini-2.5-flash',
@@ -59,10 +61,36 @@ Instructions for Responding:
         return self._dynamic_semantic_synthesizer(query_text)
 
     def _dynamic_semantic_synthesizer(self, query: str) -> str:
-        q_lower = query.lower()
+        q_lower = query.lower().strip()
         words = set(re.findall(r'\w+', q_lower))
 
         is_hindi = any(w in words for w in ['kya', 'kaise', 'kahan', 'kaun', 'kyun', 'batao', 'bataiye', 'hai', 'hain', 'ho', 'main', 'aap', 'mera', 'meri', 'karo', 'suno', 'ye', 'is', 'ko', 'se'])
+
+        # 0. Greeting / small-talk detection — checked FIRST so a simple "hi" never
+        #    falls through to the generic project-overview dump below.
+        greeting_terms = {'hi', 'hello', 'hlo', 'hey', 'heya', 'yo', 'namaste', 'namaskar', 'hola'}
+        # Treat as greeting only if the whole message is short and made up of greeting words
+        # (so "hi, what is congruence?" still routes to the real answer below).
+        if len(words) <= 3 and (words & greeting_terms):
+            if is_hindi or 'namaste' in words or 'namaskar' in words:
+                return (
+                    "👋 Namaste! Main **EmoSense AI Companion** hoon.\n\n"
+                    "Aap mujhse pooch sakte hain:\n"
+                    "• App kaise use karein (Live Check-In)\n"
+                    "• Data privacy kaise kaam karti hai\n"
+                    "• 3-Way Congruence & Emotional Masking kya hai\n"
+                    "• 4-7-8 Breathing exercise kaise karein\n\n"
+                    "Kya jaanna chahenge?"
+                )
+            return (
+                "👋 Hi there! I'm your **EmoSense AI Companion**.\n\n"
+                "I can help you with:\n"
+                "• How to use the app (Live Check-In)\n"
+                "• How your data privacy works\n"
+                "• What 3-Way Congruence & Emotional Masking mean\n"
+                "• How the 4-7-8 breathing exercise works\n\n"
+                "What would you like to know?"
+            )
 
         # Concept Maps
         privacy_terms = {'privacy', 'secure', 'safe', 'security', 'data', 'store', 'storage', 'database', 'sqlite', 'camera', 'video', 'saved', 'suraksha', 'chori', 'leak', 'cloud', 'biometric', 'emosense.db'}
@@ -163,19 +191,18 @@ Instructions for Responding:
                 )
 
         else:
-            # Universal Dynamic Synthesizer for any other open-ended question
+            # Universal Dynamic Synthesizer for any other open-ended question.
+            # No keyword bucket matched — be honest that this rule-based fallback
+            # has limits, rather than forcing a generic project pitch onto every query.
             if is_hindi:
                 return (
-                    f"🤖 **EmoSense AI Companion Response:**\n\n"
-                    f"Aapne '{query}' ke baare mein poocha hai.\n\n"
-                    "EmoSense ek privacy-first multimodal AI platform hai jo PyTorch MPS Edge AI face detection, micro-journal sentiment analysis, aur Google Gemini 3-Way Congruence Agent ko combine karke emotional masking detect karta hai.\n\n"
-                    "Aap app ke kisi bhi specific feature, data privacy, 4-7-8 breathing, ya project tech stack ke baare mein kuch bhi pooch sakte hain!"
+                    "🤖 Yeh sawaal thoda specific hai aur mera offline rule-based mode isse pura samajh nahi paya.\n\n"
+                    "Aap mujhse yeh pooch sakte hain: **app kaise use karein**, **data privacy**, **3-Way Congruence/masking kya hai**, **4-7-8 breathing**, ya **tech stack** — in par main detailed jawab de sakta hoon."
                 )
             else:
                 return (
-                    f"🤖 **EmoSense AI Assistant Response:**\n\n"
-                    f"Regarding '{query}': EmoSense is a multimodal AI wellness assistant combining PyTorch MPS edge face recognition, text sentiment, and Gemini Agent triangulation.\n\n"
-                    "Feel free to ask any open-ended question about Data Privacy, 3-Way Congruence, 4-7-8 Breathing, or Tech Architecture!"
+                    "🤖 That's a bit specific, and my offline rule-based mode couldn't fully parse it.\n\n"
+                    "I can go in depth on: **how to use the app**, **data privacy**, **3-Way Congruence / emotional masking**, **4-7-8 breathing**, or the **tech stack** — feel free to ask about any of these."
                 )
 
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,9 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Chart.js -->
@@ -15,6 +18,7 @@
   <!-- Custom Glassmorphic Stylesheet -->
   <link rel="stylesheet" href="/static/css/styles.css">
 </head>
+
 <body>
 
   <!-- Top Navigation Header -->
@@ -47,7 +51,7 @@
 
     <div class="system-status-badge">
       <div class="status-dot"></div>
-      <span id="hardwareStatusText">Mac M1 PyTorch MPS Active</span>
+      <span id="hardwareStatusText">Detecting Hardware...</span>
     </div>
   </header>
 
@@ -57,7 +61,7 @@
     <!-- TAB 1: Live Multimodal Check-In Portal -->
     <div id="tab-checkin" class="tab-content active">
       <div class="grid-two-column">
-        
+
         <!-- Left Column: Webcam & Check-in Inputs -->
         <div>
           <!-- Visual Signal: Edge AI Webcam -->
@@ -67,7 +71,9 @@
                 <i class="fa-solid fa-video" style="color: var(--primary-cyan);"></i>
                 <span>Visual Signal: Edge Facial Emotion Recognition</span>
               </div>
-              <span class="badge" style="background: rgba(0,242,254,0.1); color: var(--primary-cyan); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem;">PyTorch MPS</span>
+              <span id="visualHardwareTag" class="badge"
+                style="background: rgba(0,242,254,0.1); color: var(--primary-cyan); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem;">PyTorch
+                MPS</span>
             </div>
 
             <div class="webcam-card-content">
@@ -97,7 +103,8 @@
               </div>
             </div>
 
-            <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; display: block;">Select Self-Reported Mood Emoji:</label>
+            <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; display: block;">Select
+              Self-Reported Mood Emoji:</label>
             <div class="emoji-grid" id="emojiGrid">
               <button class="emoji-btn active" data-emoji="😀" data-mood="Happy">😀<span>Happy</span></button>
               <button class="emoji-btn" data-emoji="🙂" data-mood="Calm">🙂<span>Calm</span></button>
@@ -108,8 +115,11 @@
               <button class="emoji-btn" data-emoji="😴" data-mood="Tired">😴<span>Tired</span></button>
             </div>
 
-            <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; display: block;">Micro-Journal ("How was your day?"):</label>
-            <textarea id="journalInput" class="journal-textarea" placeholder="Share a few words about how you're feeling right now..."></textarea>
+            <label
+              style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; display: block;">Micro-Journal
+              ("How was your day?"):</label>
+            <textarea id="journalInput" class="journal-textarea"
+              placeholder="Share a few words about how you're feeling right now..."></textarea>
 
             <button id="analyzeBtn" class="action-btn">
               <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -127,7 +137,8 @@
                 <i class="fa-solid fa-shield-halved" style="color: var(--accent-amber);"></i>
                 <span>3-Way Congruence Agent (Gemini API)</span>
               </div>
-              <span class="badge" id="maskingStatusBadge" style="background: rgba(16,185,129,0.15); color: var(--accent-emerald); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem;">Aligned</span>
+              <span class="badge" id="maskingStatusBadge"
+                style="background: rgba(16,185,129,0.15); color: var(--accent-emerald); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem;">Aligned</span>
             </div>
 
             <div class="congruence-display">
@@ -152,14 +163,17 @@
               </div>
             </div>
 
-            <div style="background: rgba(0,0,0,0.25); border-radius: var(--radius-md); padding: 1.25rem; border: 1px solid var(--glass-border);">
+            <div
+              style="background: rgba(0,0,0,0.25); border-radius: var(--radius-md); padding: 1.25rem; border: 1px solid var(--glass-border);">
               <p id="wellnessSummaryText" style="font-size: 0.95rem; color: var(--text-main); line-height: 1.6;">
                 Perform a check-in to generate your real-time agentic wellness summary and micro-intervention plan.
               </p>
 
-              <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
+              <div
+                style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-size: 0.85rem; color: var(--text-muted);">Recommended Reset:</span>
-                <span id="recommendedInterventionTag" style="font-weight: 600; color: var(--primary-cyan); font-size: 0.9rem;">4-7-8 Guided Breathing</span>
+                <span id="recommendedInterventionTag"
+                  style="font-weight: 600; color: var(--primary-cyan); font-size: 0.9rem;">4-7-8 Guided Breathing</span>
               </div>
             </div>
           </div>
@@ -205,7 +219,8 @@
               </div>
             </div>
 
-            <button id="startBreathingBtn" class="action-btn" style="background: linear-gradient(135deg, var(--accent-emerald), #059669); width: auto; padding: 0.6rem 2rem;">
+            <button id="startBreathingBtn" class="action-btn"
+              style="background: linear-gradient(135deg, var(--accent-emerald), #059669); width: auto; padding: 0.6rem 2rem;">
               <i class="fa-solid fa-play"></i> Start 4-7-8 Reset
             </button>
           </div>
@@ -226,7 +241,8 @@
 
           <div class="audio-player-card">
             <div style="display: flex; align-items: center; gap: 1rem;">
-              <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(0,242,254,0.1); color: var(--primary-cyan); display: flex; align-items: center; justify-content: center;">
+              <div
+                style="width: 44px; height: 44px; border-radius: 50%; background: rgba(0,242,254,0.1); color: var(--primary-cyan); display: flex; align-items: center; justify-content: center;">
                 <i class="fa-solid fa-water"></i>
               </div>
               <div>
@@ -254,26 +270,32 @@
         </div>
 
         <p style="font-size: 0.95rem; color: var(--text-main); line-height: 1.6; margin-bottom: 1.5rem;">
-          EmoSense is built on a <strong>Privacy-First Architecture</strong>. Your facial biometric privacy and personal journaling data are strictly safeguarded through local edge processing and encrypted SQLite storage.
+          EmoSense is built on a <strong>Privacy-First Architecture</strong>. Your facial biometric privacy and personal
+          journaling data are strictly safeguarded through local edge processing and encrypted SQLite storage.
         </p>
 
         <div class="privacy-grid">
           <div class="privacy-card">
             <div class="privacy-card-icon"><i class="fa-solid fa-microchip"></i></div>
             <h4>Edge AI On-Device Processing</h4>
-            <p>Facial emotion recognition runs 100% locally on your Mac M1 MPS GPU using PyTorch CNN. Raw video frames are NEVER uploaded to any cloud server.</p>
+            <p>Facial emotion recognition runs 100% locally on your Mac M1 MPS GPU using PyTorch CNN. Raw video frames
+              are NEVER uploaded to any cloud server.</p>
           </div>
 
           <div class="privacy-card">
-            <div class="privacy-card-icon" style="background: rgba(124,58,237,0.1); color: var(--accent-purple);"><i class="fa-solid fa-database"></i></div>
+            <div class="privacy-card-icon" style="background: rgba(124,58,237,0.1); color: var(--accent-purple);"><i
+                class="fa-solid fa-database"></i></div>
             <h4>Local Encrypted Storage</h4>
-            <p>Your check-in timeline and journal logs are stored safely inside your local SQLite database (<code>emosense.db</code>) on your own machine.</p>
+            <p>Your check-in timeline and journal logs are stored safely inside your local SQLite database
+              (<code>emosense.db</code>) on your own machine.</p>
           </div>
 
           <div class="privacy-card">
-            <div class="privacy-card-icon" style="background: rgba(245,158,11,0.1); color: var(--accent-amber);"><i class="fa-solid fa-robot"></i></div>
+            <div class="privacy-card-icon" style="background: rgba(245,158,11,0.1); color: var(--accent-amber);"><i
+                class="fa-solid fa-robot"></i></div>
             <h4>Agentic Congruence Safety</h4>
-            <p>The 3-Way Congruence Agent processes text sentiment and numerical emotion scores to detect emotional masking without retaining biometric face data.</p>
+            <p>The 3-Way Congruence Agent processes text sentiment and numerical emotion scores to detect emotional
+              masking without retaining biometric face data.</p>
           </div>
         </div>
       </div>
@@ -298,12 +320,14 @@
 
     <div class="chat-messages" id="chatMessages">
       <div class="chat-msg bot">
-        👋 Hello! I am your <strong>EmoSense AI Companion</strong>. Ask me anything about how to perform check-ins, how your biometric privacy is protected, or how 4-7-8 breathing works!
+        👋 Hello! I am your <strong>EmoSense AI Companion</strong>. Ask me anything about how to perform check-ins, how
+        your biometric privacy is protected, or how 4-7-8 breathing works!
       </div>
     </div>
 
     <div class="chat-input-row">
-      <input type="text" id="chatInput" class="chat-input" placeholder="Ask about privacy, check-ins, or breathing..." />
+      <input type="text" id="chatInput" class="chat-input"
+        placeholder="Ask about privacy, check-ins, or breathing..." />
       <button id="chatSendBtn" class="chat-send-btn">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
@@ -315,4 +339,5 @@
   <script src="/static/js/breathing.js"></script>
   <script src="/static/js/app.js"></script>
 </body>
+
 </html>

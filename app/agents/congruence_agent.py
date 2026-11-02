@@ -70,7 +70,7 @@ Instructions:
                     model='gemini-2.5-flash',
                     contents=prompt,
                 )
-                
+
                 text_out = response.text.strip()
                 if "```json" in text_out:
                     text_out = text_out.split("```json")[1].split("```")[0].strip()
@@ -92,6 +92,37 @@ Instructions:
             visual_emotion, textual_sentiment, sentiment_score, self_reported_mood, journal_text
         )
 
+    def _classify_signal(self, kind: str, value: str, sentiment_score: float = None, journal_lower: str = "") -> str:
+        """
+        Buckets any one of the 3 signals into 'positive' | 'negative' | 'neutral'
+        so all three can be compared on the same scale.
+        """
+        if kind == "visual":
+            if value in ['Happy', 'Surprise']:
+                return "positive"
+            if value in ['Sad', 'Angry', 'Fear', 'Disgust']:
+                return "negative"
+            return "neutral"  # Neutral
+
+        if kind == "text":
+            negative_kw = any(w in journal_lower for w in [
+                'sad', 'hopeless', 'tired', 'depressed', 'overwhelmed', 'bad', 'hate', 'pain', 'fail', 'upset'
+            ])
+            if (sentiment_score is not None and sentiment_score <= -0.15) or value == "Negative" or negative_kw:
+                return "negative"
+            if (sentiment_score is not None and sentiment_score >= 0.15) or value == "Positive":
+                return "positive"
+            return "neutral"
+
+        if kind == "mood":
+            if value in ['Happy', 'Joyful', 'Excited', 'Good', 'Calm']:
+                return "positive"
+            if value in ['Sad', 'Angry', 'Anxious', 'Stressed', 'Overwhelmed', 'Tired']:
+                return "negative"
+            return "neutral"  # Neutral
+
+        return "neutral"
+
     def _heuristic_congruence(
         self,
         visual_emotion: str,
@@ -102,41 +133,59 @@ Instructions:
     ) -> Dict[str, Any]:
         """
         Rule-based fallback calculation when offline or without Gemini API key.
+        Compares all THREE signals (visual, text, self-reported mood) against each
+        other, rather than only visual+text, so a mismatched emoji is never silently
+        ignored.
         """
         journal_lower = (journal_text or "").lower()
 
-        vis_positive = visual_emotion in ['Happy', 'Surprise']
-        vis_negative = visual_emotion in ['Sad', 'Angry', 'Fear', 'Disgust']
+        vis_bucket = self._classify_signal("visual", visual_emotion)
+        text_bucket = self._classify_signal("text", textual_sentiment, sentiment_score, journal_lower)
+        mood_bucket = self._classify_signal("mood", self_reported_mood)
 
-        text_negative = sentiment_score <= -0.15 or textual_sentiment == "Negative" or any(w in journal_lower for w in ['sad', 'hopeless', 'tired', 'depressed', 'overwhelmed', 'bad', 'hate', 'pain', 'fail', 'upset'])
-        text_positive = sentiment_score >= 0.15 or textual_sentiment == "Positive"
-
-        mood_positive = self_reported_mood in ['Happy', 'Joyful', 'Excited', 'Good']
-        mood_negative = self_reported_mood in ['Sad', 'Angry', 'Anxious', 'Stressed', 'Overwhelmed']
-
-        # Detect Masked Distress: Face/emoji looks positive/neutral, but text reveals distress
-        if (vis_positive or self_reported_mood in ['Happy', 'Calm', 'Neutral']) and text_negative:
-            score = 38.0
+        # 1. Emotional Masking: text reveals distress while an OUTWARD signal
+        #    (face or self-reported mood) looks positive. This check has priority
+        #    over the general agreement check below, because masking is the
+        #    specific pattern this app exists to catch.
+        if text_bucket == "negative" and (vis_bucket == "positive" or mood_bucket == "positive"):
+            score = 35.0
             status = "Masked Distress"
             is_masking = True
-            explanation = "Detected Emotional Masking: Outward facial expression/emoji appears calm or neutral, but journal entry reveals underlying emotional distress."
-        elif (vis_positive and text_positive) or (vis_negative and text_negative) or (mood_negative and text_negative):
+            explanation = (
+                "Detected Emotional Masking: an outward signal (facial expression or self-reported mood) "
+                "appears positive, but the journal entry reveals underlying emotional distress."
+            )
+            return {"congruence_score": score, "status": status, "is_masking": is_masking, "explanation": explanation}
+
+        buckets = [vis_bucket, text_bucket, mood_bucket]
+        distinct = set(buckets)
+
+        # 2. All three signals agree -> genuinely congruent
+        if len(distinct) == 1:
             score = 92.0
             status = "Congruent"
-            is_masking = False
-            explanation = "High congruence across visual, textual, and self-reported mood signals."
-        else:
-            score = 68.0
-            status = "Mild Discrepancy"
-            is_masking = False
-            explanation = "Mild variance observed between facial expression and journal text sentiment."
+            explanation = "High congruence: visual expression, journal tone, and self-reported mood all align."
 
-        return {
-            "congruence_score": score,
-            "status": status,
-            "is_masking": is_masking,
-            "explanation": explanation
-        }
+        # 3. Exactly two of three agree -> mild discrepancy
+        elif len(distinct) == 2:
+            score = 65.0
+            status = "Mild Discrepancy"
+            explanation = (
+                f"Mild variance observed: one signal (visual={visual_emotion}, "
+                f"text={textual_sentiment}, mood={self_reported_mood}) doesn't match the other two."
+            )
+
+        # 4. All three signals disagree -> stronger discrepancy, but not masking
+        #    (masking case was already handled above)
+        else:
+            score = 48.0
+            status = "Mild Discrepancy"
+            explanation = (
+                f"Notable discrepancy: visual ({visual_emotion}), text ({textual_sentiment}), and "
+                f"self-reported mood ({self_reported_mood}) all point in different directions."
+            )
+
+        return {"congruence_score": score, "status": status, "is_masking": False, "explanation": explanation}
 
 
 _congruence_agent = None

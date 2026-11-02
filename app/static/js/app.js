@@ -17,6 +17,7 @@ class EmoSenseApp {
     this.initChatbotWidget();
     this.initAudioPlayer();
     this.loadHistory();
+    this.loadSystemStatus();
   }
 
   // 1. Navigation Tab Switcher
@@ -262,7 +263,7 @@ class EmoSenseApp {
           body: JSON.stringify({ message: msg })
         });
         const data = await response.json();
-        
+
         const typingEl = document.getElementById(typingId);
         if (typingEl) typingEl.innerHTML = data.reply.replace(/\n/g, '<br/>');
       } catch (err) {
@@ -310,17 +311,17 @@ class EmoSenseApp {
       } else {
         isPlaying = true;
         playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-        
+
         // Web Audio API Ambient Binaural Harmonic Generator for relaxation
         try {
           audioCtx = new (window.AudioContext || window.webkitAudioContext)();
           oscillator = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
-          
+
           oscillator.type = 'sine';
           oscillator.frequency.setValueAtTime(432, audioCtx.currentTime); // 432Hz calming frequency
           gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-          
+
           oscillator.connect(gain);
           gain.connect(audioCtx.destination);
           oscillator.start();
@@ -341,6 +342,35 @@ class EmoSenseApp {
       }
     } catch (err) {
       console.warn('Failed to load history trends:', err);
+    }
+  }
+
+  // 9. Detect & Display Actual Hardware Acceleration Device
+  async loadSystemStatus() {
+    const tag = document.getElementById('hardwareStatusText');
+    const visualTag = document.getElementById('visualHardwareTag');
+    if (!tag) return;
+
+    try {
+      const response = await fetch('/api/system-status');
+      const data = await response.json();
+
+      let label, shortLabel;
+      if (data.device === 'mps') {
+        label = 'Apple GPU (MPS) Active';
+        shortLabel = 'PyTorch MPS';
+      } else if (data.device === 'cuda') {
+        label = 'NVIDIA GPU (CUDA) Active';
+        shortLabel = 'PyTorch CUDA';
+      } else {
+        label = 'CPU Mode (No GPU Detected)';
+        shortLabel = 'PyTorch CPU';
+      }
+      tag.textContent = label;
+      if (visualTag) visualTag.textContent = shortLabel;
+    } catch (err) {
+      console.warn('Failed to fetch system status:', err);
+      tag.textContent = 'Hardware Status Unknown';
     }
   }
 }

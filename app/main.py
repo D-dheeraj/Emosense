@@ -47,6 +47,16 @@ templates_dir = BASE_DIR / "app" / "templates"
 os.makedirs(templates_dir, exist_ok=True)
 templates = Jinja2Templates(directory=str(templates_dir))
 
+@app.get("/api/system-status")
+async def get_system_status():
+    device_str = str(DEVICE)
+    if "mps" in device_str:
+        device = "mps"
+    elif "cuda" in device_str:
+        device = "cuda"
+    else:
+        device = "cpu"
+    return {"device": device}
 
 @app.get("/")
 def read_root(request: Request):
